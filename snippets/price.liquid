@@ -124,13 +124,35 @@
       </small>
     </div>
     {%- if show_badges -%}
-      <span class="badge price__badge-sale color-{{ settings.sale_badge_color_scheme }}">
-        {{ 'products.product.on_sale' | t }}
-      </span>
+      {%- if available == false -%}
+        <!-- Sold Out badge (highest priority) -->
+        <span class="badge price__badge-sold-out color-{{ settings.sold_out_badge_color_scheme }}">
+          {{ 'products.product.sold_out' | t }}
+        </span>
 
-      <span class="badge price__badge-sold-out color-{{ settings.sold_out_badge_color_scheme }}">
-        {{ 'products.product.sold_out' | t }}
-      </span>
+      {%- elsif target.inventory_quantity < 10 -%}
+        <!-- Low Stock badge -->
+        <span class="badge price__badge-low-stock color-{{ settings.low_stock_badge_color_scheme }}">
+          {{ 'products.product.low_stock' | t }}
+        </span>
+
+      {%- elsif target.metafields.custom_labels.label_id != blank -%}
+        <!-- Custom Variant Label badge -->
+        <div
+          id="variant-label"
+          class="badge variant-label"
+          style="background-color: {{ target.metafields.custom_labels.label_bg_color }};
+                color: {{ target.metafields.custom_labels.label_text_color }};">
+          {{ target.metafields.custom_labels.label_id }}
+        </div>
+
+      {%- elsif compare_at_price > price -%}
+        <!-- Sale badge -->
+        <span class="badge price__badge-sale color-{{ settings.sale_badge_color_scheme }}">
+          {{ 'products.product.on_sale' | t }}
+        </span>
+
+      {%- endif -%}
     {%- endif -%}
   </div>
 {% endunless %}
