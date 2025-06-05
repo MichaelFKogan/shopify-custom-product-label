@@ -1125,6 +1125,33 @@ class VariantSelects extends HTMLElement {
 
 customElements.define('variant-selects', VariantSelects);
 
+function updateVariantLabelBadge() {
+  const currentVariantId = document.querySelector('[name="id"]')?.value;
+  const variantData = JSON.parse(document.getElementById('VariantData').textContent);
+  const labelEl = document.getElementById('variant-label');
+
+  const variantMetafield = variantData.find(v => v.id == currentVariantId)?.custom_labels;
+
+  if (variantMetafield && variantMetafield.label_id) {
+    labelEl.textContent = variantMetafield.label_id;
+    labelEl.style.display = 'inline-block';
+    labelEl.style.backgroundColor = variantMetafield.label_bg_color || '#000';
+    labelEl.style.color = variantMetafield.label_text_color || '#fff';
+  } else {
+    labelEl.style.display = 'none';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  updateVariantLabelBadge(); // on initial load
+});
+
+// Run when variant changes (re-rendered price.liquid)
+document.addEventListener('variant:change', () => {
+  // Wait for Liquid section to re-render the price
+  requestAnimationFrame(() => updateVariantLabelBadge());
+});
+
 class ProductRecommendations extends HTMLElement {
   observer = undefined;
 
