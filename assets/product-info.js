@@ -218,6 +218,14 @@ if (!customElements.get('product-info')) {
           const input = productForm.querySelector('input[name="id"]');
           input.value = variantId ?? '';
           input.dispatchEvent(new Event('change', { bubbles: true }));
+
+          // Dispatch a custom event after variant is fully updated
+          productForm.dispatchEvent(new CustomEvent('variant:change', {
+            bubbles: true,
+            detail: {
+              variantId
+            }
+          }));
         });
       }
 
